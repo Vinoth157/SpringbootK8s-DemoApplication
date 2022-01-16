@@ -1,0 +1,58 @@
+server:
+  port: '8054'
+spring:
+  application:
+    name: 'CLOUD-GATEWAY'
+  cloud:
+    gateway:
+      routes:
+        - id: ADDRESS-SERVICE
+          uri: lb://ADDRESS-SERVICE
+          predicates:
+            - Path=/address/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: ADDRESS-SERVICE
+                fallbackuri: forward:/addressServiceFallBack
+        - id: PARENT-SERVICE
+          uri: lb://PARENT-SERVICE
+          predicates:
+            - Path=/parent/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: PARENT-SERVICE
+                fallbackuri: forward:/parentServiceFallBack
+eureka:
+  instance:
+    hostname: eureka-0
+    preferIpAddress: true   
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://eureka-0.eureka.default.svc.cluster.local:8761/eureka
+resilience4j:
+  circuitbreaker:
+    instances:
+      PARENT-SERVICE:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 5s
+        failureRateThreshold: 50
+        eventConsumerBufferSize: 10
+        slidingWindowType: COUNT_BASED
+      ADDRESS-SERVICE:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 5s
+        failureRateThreshold: 50
+        eventConsumerBufferSize: 10
+        slidingWindowType: COUNT_BASED
