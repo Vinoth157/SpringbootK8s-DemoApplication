@@ -1,0 +1,29 @@
+server:
+  port: '8051'
+spring:
+  application:
+    name: 'ADDRESS-SERVICE'
+  datasource:
+    password: bv
+    driver-class-name: org.h2.Driver
+    username: bv
+    url: jdbc:h2:mem:springk8sdb?createDatabaseIfNotExist=true
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect        
+        format_sql: 'true'
+    show-sql: 'true'
+    hibernate:
+      ddl-auto: update
+      show-sql: 'true'
+eureka:
+  instance:
+    hostname: eureka-0
+    preferIpAddress: true   
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://eureka-0.eureka.default.svc.cluster.local:8761/eureka
