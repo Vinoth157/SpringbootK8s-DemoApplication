@@ -1,0 +1,11 @@
+server:
+  port: '8053'
+spring:
+  application:
+    name: 'CLOUD-CONFIG'
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/Vinoth157/ConfigServer
+          cloud-on-start: true
